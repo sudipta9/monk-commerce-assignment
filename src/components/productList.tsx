@@ -38,17 +38,19 @@ import {
 export type Product = {
   id: number;
   title: string;
-  variants?: {
-    id: number;
-    product_id: number;
-    title: string;
-    price: string;
-  }[];
+  variants?: Variant[];
   image: {
     id: number;
     product_id: number;
     src: string;
   };
+};
+
+export type Variant = {
+  id: number;
+  product_id: number;
+  title: string;
+  price: string;
 };
 
 export type ProductListProps = {
@@ -59,9 +61,7 @@ export type ProductListProps = {
 // ============== end type definitions ==============
 
 // *============================ Displaying single Variant ============================*
-const VariantItem: React.FC<{ variant: Product["variants"][0] }> = ({
-  variant,
-}) => {
+const VariantItem: React.FC<{ variant: Variant }> = ({ variant }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: variant.id });
 
@@ -150,7 +150,7 @@ const ProductItem: React.FC<{
     transition,
   };
 
-  const [variants, setVariants] = useState<Product["variants"]>(
+  const [variants, setVariants] = useState<Variant[] | undefined>(
     product.variants
   );
   const [showProductDiscountOption, setShowProductDiscountOption] =
