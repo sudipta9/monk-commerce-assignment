@@ -33,35 +33,23 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import { Product, Variant } from "@/types/products";
 
 // ============== start type definitions ==============
-export type Product = {
-  id: number;
-  title: string;
-  variants?: Variant[];
-  image: {
-    id: number;
-    product_id: number;
-    src: string;
-  };
-};
-
-export type Variant = {
-  id: number;
-  product_id: number;
-  title: string;
-  price: string;
-};
 
 export type ProductListProps = {
-  products: Product[];
+  products: Array<Product>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 };
 
 // ============== end type definitions ==============
 
 // *============================ Displaying single Variant ============================*
-const VariantItem: React.FC<{ variant: Variant }> = ({ variant }) => {
+const VariantItem: React.FC<{
+  variant: Variant;
+  product: Product;
+  setProductState: React.Dispatch<React.SetStateAction<Product[]>>;
+}> = ({ variant, setProductState, product }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: variant.id });
 
@@ -117,7 +105,29 @@ const VariantItem: React.FC<{ variant: Variant }> = ({ variant }) => {
           )}
         </div>
         {/* <div className="col-span-1"> */}
-        <Button variant="secondary">
+        <Button
+          variant="secondary"
+          onClick={(e) => {
+            e.preventDefault();
+
+            setProductState((currentProductState) => {
+              const updatedState: Product[] = currentProductState.map(
+                (_product) => {
+                  if (product.id === _product.id) {
+                    return {
+                      ...product,
+                      variants: product.variants.filter(
+                        (_variant) => _variant.id !== variant.id
+                      ),
+                    };
+                  } else return _product;
+                }
+              );
+
+              return updatedState;
+            });
+          }}
+        >
           <X />
         </Button>
         {/* </div> */}
@@ -150,9 +160,8 @@ const ProductItem: React.FC<{
     transition,
   };
 
-  const [variants, setVariants] = useState<Variant[] | undefined>(
-    product.variants
-  );
+  const [variants, setVariants] = useState<Variant[]>(product.variants);
+
   const [showProductDiscountOption, setShowProductDiscountOption] =
     useState<boolean>(false);
 
@@ -189,9 +198,13 @@ const ProductItem: React.FC<{
       const newProducts = [...allProducts];
       newProducts[productIndex].variants = variants;
 
-      return newProducts;
+      return newProducts.filter((prod) => prod.variants.length);
     });
-  }, [product.id, setProductsState, variants]);
+  }, [setProductsState, variants, product]);
+
+  useEffect(() => {
+    setVariants(product.variants);
+  }, [product]);
 
   return (
     <div
@@ -245,38 +258,52 @@ const ProductItem: React.FC<{
           )}
         </div>
         {/* <div className="col-span-1"> */}
-        <Button variant="secondary">
+        <Button
+          variant="secondary"
+          onClick={(e) => {
+            e.preventDefault();
+            setProductsState((currentProductState) => {
+              return currentProductState.filter(
+                (prod) => prod.id !== product.id
+              );
+            });
+          }}
+        >
           <X />
         </Button>
         {/* </div> */}
       </div>
 
-      {variants?.length && (
-        <Collapsible className="flex flex-col">
-          <CollapsibleTrigger className="text-right pt-2 hover:underline">
-            View Variants
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleVariantsDragEnd}
-              id={`product-${product.id}`}
+      {/* As every product will have at least one variant so not checking the length of variants */}
+      <Collapsible className="flex flex-col">
+        <CollapsibleTrigger className="text-right pt-2 hover:underline">
+          View Variants
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleVariantsDragEnd}
+            id={`product-${product.id}`}
+          >
+            <SortableContext
+              items={variants.map((variant) => variant.id)}
+              strategy={verticalListSortingStrategy}
             >
-              <SortableContext
-                items={variants.map((variant) => variant.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="my-2">
-                  {variants.map((variant) => (
-                    <VariantItem key={variant.id} variant={variant} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </CollapsibleContent>
-        </Collapsible>
-      )}
+              <div className="my-2">
+                {variants.map((variant) => (
+                  <VariantItem
+                    key={variant.id}
+                    variant={variant}
+                    product={product}
+                    setProductState={setProductsState}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };

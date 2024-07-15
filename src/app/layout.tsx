@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import Navbar from "@/components/navbar";
+import "react-checkbox-tree/lib/react-checkbox-tree.css";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased m-auto overflow-hidden",
+          "min-h-screen bg-background font-sans antialiased m-auto",
           fontSans.variable
         )}
       >
@@ -41,8 +42,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
             />
 
             <main className="flex-1">
-              <div className="border-b container">{children}</div>
+              <div className="border-b container min-h-[80vh]">{children}</div>
             </main>
+
+            <footer className="w-full my-4">
+              <p className="text-center">
+                Developed with 💙 by{" "}
+                <a
+                  href="https://www.linkedin.com/in/sudipta-pradhan/"
+                  className="hover:underline"
+                >
+                  Sudipta Pradhan
+                </a>
+              </p>
+            </footer>
           </div>
         </ThemeProvider>
       </body>

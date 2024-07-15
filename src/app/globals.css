@@ -75,3 +75,32 @@
   padding-right: 2rem;
   padding-left: 2rem;
 }
+
+.rct-collapse {
+  display: none;
+}
+
+.rct-node {
+  margin-left: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.rct-node * {
+  @apply hover:bg-transparent !important;
+}
+
+.rct-node label {
+  @apply flex items-center hover:bg-transparent !important;
+}
+
+.rct-node input[type="checkbox"] {
+  @apply accent-foreground h-4 w-4 !important;
+}
+
+.rct-node .rct-title {
+  /* margin-left: 0.75rem; */
+}
+
+.pretty input[type="checkbox"] {
+  @apply hidden;
+}

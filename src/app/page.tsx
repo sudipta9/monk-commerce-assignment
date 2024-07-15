@@ -1,67 +1,20 @@
 "use client";
-import ProductList, { Product } from "@/components/productList";
+import AddProduct from "@/components/addProduct";
+import ProductList from "@/components/productList";
+import { Drawer } from "@/components/ui/drawer";
+import { demoData } from "@/data/demoProductsData";
+import { Product } from "@/types/products";
 import React, { useEffect } from "react";
-
-const demoData = [
-  {
-    id: 77,
-    title: "Fog Linen Chambray Towel - Beige Stripe",
-    variants: [
-      {
-        id: 1,
-        product_id: 77,
-        title: "XS / Silver",
-        price: "49",
-      },
-      {
-        id: 2,
-        product_id: 77,
-        title: "S / Silver",
-        price: "49",
-      },
-      {
-        id: 3,
-        product_id: 77,
-        title: "M / Silver",
-        price: "49",
-      },
-    ],
-    image: {
-      id: 266,
-      product_id: 77,
-      src: "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/77/images/266/foglinenbeigestripetowel1b.1647248662.386.513.jpg?c=1",
-    },
-  },
-  {
-    id: 80,
-    title: "Orbit Terrarium - Large",
-    // variants: [
-    //   {
-    //     id: 64,
-    //     product_id: 80,
-    //     title: "Default Title",
-    //     price: "109",
-    //   },
-    // ],
-    image: {
-      id: 272,
-      product_id: 80,
-      src: "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/80/images/272/roundterrariumlarge.1647248662.386.513.jpg?c=1",
-    },
-  },
-];
 
 const HomePage = () => {
   const [products, setProducts] = React.useState<Product[]>(demoData);
 
-  useEffect(() => {
-    console.dir(products);
-  }, [products]);
-
   return (
-    <div>
+    // applying drawer context here so that we can open the add product drawer from product list
+    <>
       <ProductList products={products} setProducts={setProducts} />
-    </div>
+      <AddProduct products={products} setProducts={setProducts} />
+    </>
   );
 };
 
